@@ -21,8 +21,5 @@
     become: yes
     become_user: root
     
-  - name: Installing boto3 for AWS dependency
-    pip:
-      name: boto3
 
 ...
