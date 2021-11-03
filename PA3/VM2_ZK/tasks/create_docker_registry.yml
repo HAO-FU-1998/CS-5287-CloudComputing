@@ -11,7 +11,7 @@
       dest: /etc/docker/daemon.json
       content: |
         {
-            "insecure-registries" : ["{{ zookeeper_ip }}"]
+            "insecure-registries" : ["129.114.25.15"]
         }
     become: yes
     become_user: root
