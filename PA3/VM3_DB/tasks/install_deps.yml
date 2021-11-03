@@ -18,7 +18,7 @@
     tags: ms3
 
   - name: Loading CouchDB into shell
-    shell: 'source /etc/os-release && echo "deb [signed-by=/usr/share/keyrings/couchdb-archive-keyring.gpg] https://apache.jfrog.io/artifactory/couchdb-deb/ ${VERSION_CODENAME} main" \ | sudo tee /etc/apt/sources.list.d/couchdb.list >/dev/null'
+    shell: 'source /etc/os-release && echo "deb [signed-by=/usr/share/keyrings/couchdb-archive-keyring.gpg] https://apache.jfrog.io/artifactory/couchdb-deb/ focal main" \ | sudo tee /etc/apt/sources.list.d/couchdb.list >/dev/null'
     args:
       executable: /bin/bash
     tags: ms3
@@ -51,7 +51,7 @@
       - { section: 'couchdb', option: 'single_node', value: 'true' }
       - { section: 'chttpd', option: 'port', value: '5984' }
       - { section: 'chttpd', option: 'bind_address', value: '0.0.0.0' }
-      - { section: 'admins', option: 'admin', value: 'JoyRide09*' }
+      - { section: 'admins', option: 'admin', value: '123456' }
     loop_control:
       index_var: index
     become: yes
