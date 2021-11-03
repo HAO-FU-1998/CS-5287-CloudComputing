@@ -1,0 +1,38 @@
+---
+#- name: "Create VM2 & VM3 on Chameleon"
+  #hosts: localhost
+  #remote_user: vagrant
+  #gather_facts: yes
+  #become_user: no
+  #tasks:
+  #- include_tasks: playbook_create_instance.yml
+
+- name: "VM2"
+  hosts: 129.114.25.15
+  remote_user: cc
+  gather_facts: yes
+  become_user: no
+  tasks:
+  - include_tasks: playbook_copy_file_to_cloud_vm.yml
+  - include_tasks: playbook_VM2.yml
+  
+- name: "VM3"
+  hosts: 129.114.25.58
+  remote_user: cc
+  gather_facts: yes
+  become_user: no
+  tasks:
+  - include_tasks: playbook_copy_file_to_cloud_vm.yml
+  - include_tasks: playbook_VM3.yml
+  #- include_tasks: playbook_consumer.yml
+  #- include_tasks: playbook_topic.yml
+  
+- name: "consumer"
+  hosts: 129.114.25.15
+  remote_user: cc
+  gather_facts: yes
+  become_user: no
+  tasks:
+  - include_tasks: playbook_consumer.yml
+  - include_tasks: playbook_topic.yml
+...
