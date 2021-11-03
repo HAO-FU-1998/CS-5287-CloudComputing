@@ -19,6 +19,6 @@ spec:                     # This is the specification where we can even put the 
           image: wurstmeister/kafka   # this is the image in registry accessible
                                              # from all our workers
           imagePullPolicy: Always  # This forces the node to pull the image
-          command: ["kafka-server-start.sh config/server.properties --override listeners=PLAINTEXT://:9092 --override broker_id=0 --override advertised_host_name=${VM2_HOST_IP} --override zookeeper_connect=zookeeper:2181 --override delete_topic_enable=true --override cfg_default_replication_factor=2 --override advertised_listeners=PLAINTEXT://${VM2_HOST_IP}:9092 --override listener_security_protocol_map=PLAINTEXT:PLAINTEXT,SSL:SSL,SASL_PLAINTEXT:SASL_PLAINTEXT,SASL_SSL:SASL_SSL --override heap_opts='-Xmx256M -Xms128M'
+          command: ["kafka-server-start.sh config/server.properties --override listeners=PLAINTEXT://:9092 --override broker_id=0 --override advertised_host_name=129.114.25.15 --override zookeeper_connect=zookeeper:2181 --override delete_topic_enable=true --override cfg_default_replication_factor=2 --override advertised_listeners=PLAINTEXT://129.114.25.15:9092 --override listener_security_protocol_map=PLAINTEXT:PLAINTEXT,SSL:SSL,SASL_PLAINTEXT:SASL_PLAINTEXT,SASL_SSL:SASL_SSL]
           args: [""]  # arguments to run. 
       restartPolicy: Never  # we ask Kubernetes not to restart
