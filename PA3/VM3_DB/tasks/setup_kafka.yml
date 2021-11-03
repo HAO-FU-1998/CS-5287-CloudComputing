@@ -23,7 +23,7 @@
 
   - name: "Update Kafka Broker Id"
     ansible.builtin.lineinfile:
-      path: /home/kafka/kafka/config/server.properties
+      path: /home/cc/config/server.properties
       regexp: '^broker.id='
       line: broker.id=1
     become: yes
@@ -31,9 +31,9 @@
   
   - name: "Update Kafka Advertised Listeners"
     ansible.builtin.lineinfile:
-      path: /home/kafka/kafka/config/server.properties
+      path: /home/cc/config/server.properties
       regexp: '^#advertised.listeners='
-      line: "advertised.listeners=PLAINTEXT://{{ couch_ip }}:9092"
+      line: "advertised.listeners=PLAINTEXT://129.114.25.58:9092"
     become: yes
     become_user: root
     
