@@ -9,8 +9,8 @@ FROM python:3.7-alpine
 RUN apk add --update && apk add net-tools python3 gcc
 RUN apk add --no-cache python3 py3-pip
 RUN pip3 install kafka-python
-WORKDIR /home/ubuntu/CS5287/common
+WORKDIR /home/ubuntu/CS5287
 COPY . .
 
 ENV FLASK_APP=app.py
-CMD ["python3", "consumer.py"]
+CMD ["python3", "consumer_cc.py"]
