@@ -1,19 +1,19 @@
 ---
 #
-# Author: Stephen Rees
+# Author: 
 # EECS 5287: Principles of Cloud Computing
 #
 # In this playbook we adjust the IP addresses in the Docker .env file
 #
   - name: Configure Docker env VM2 IP address
     ansible.builtin.lineinfile:
-      path: /home/ubuntu/CS5287/PA3/docker/.env
+      path: /home/cc/CS5287/PA3/docker/.env
       regexp: '^VM2_HOST_IP='
-      line: "VM2_HOST_IP={{ zookeeper_ip }}"
+      line: "VM2_HOST_IP=129.114.25.15"
       
   - name: Configure Docker env VM3 IP address
     ansible.builtin.lineinfile:
-      path: /home/ubuntu/CS5287/PA3/docker/.env
+      path: /home/cc/CS5287/PA3/docker/.env
       regexp: '^VM3_HOST_IP='
-      line: "VM3_HOST_IP={{ couch_ip }}"
+      line: "VM3_HOST_IP=129.114.25.58"
 ...
