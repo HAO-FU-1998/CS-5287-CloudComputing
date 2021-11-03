@@ -1,0 +1,14 @@
+---
+#
+# Author: Morley Bankston
+# EECS 5287: Principles of Cloud Computing
+#
+# In this playbook we copy our repository from github
+#
+  - name: Clone our GIT repo
+    ansible.builtin.git:
+      repo: 'https://github.com/srees/CS5287.git'
+      dest: /home/vagrant/CS5287
+      version: main
+...
+

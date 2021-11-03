@@ -1,0 +1,15 @@
+[Unit]
+Description=Kafka CoinBase Producer
+After=multi-user.target
+StartLimitIntervalSec=0
+
+[Service]
+Type=simple
+Restart=always
+RestartSec=1
+User=vagrant
+EnvironmentFile=/etc/systemd/system/producer.service.d/producer.conf
+ExecStart=/usr/bin/python3 -u /home/vagrant/CS5287/common/producer.py --broker_ip ${ZOOKEEPER_IP} --broker_port 9092 --topic CoinCap_1-5 --assets bitcoin,ethereum,cardano,binance-coin,tether
+
+[Install]
+WantedBy=multi-user.target

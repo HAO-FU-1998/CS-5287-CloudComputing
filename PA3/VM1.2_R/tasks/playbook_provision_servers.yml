@@ -1,0 +1,81 @@
+---
+#
+# EECS 5287: Principles of Cloud Computing
+# Author: Morley Bankston
+# Modified: Stephen Rees
+#
+# This playbook will provision 2 servers on AWS and will be triggered by VM1.2_R
+  - name: Create ZK instance on AWS (No wait)
+    amazon.aws.ec2_instance:
+      name: "ansible-zookeeper"
+      key_name: "CS5287"
+      availability_zone: us-east-1a
+      instance_type: t2.medium
+      security_group: kafka
+      network:
+        assign_public_ip: true
+      image_id: ami-0da97a9953c1a3ee5
+      region: us-east-1
+      state: present
+  - name: Create CouchDB instance on AWS (Wait)
+    amazon.aws.ec2_instance:
+      name: "ansible-couchdb"
+      key_name: "Bankston_AWS_EDUCATE"
+      availability_zone: us-east-1a
+      instance_type: t2.micro
+      security_group: kafka
+      network:
+        assign_public_ip: true
+      image_id: ami-0da97a9953c1a3ee5 
+      region: us-east-1
+      wait: yes
+      state: started
+    register: db_instance
+  - name: "Print VM3 results"
+    debug:
+      msg: "CouchDB IP: {{ db_instance.instances[0].public_ip_address }}"
+  - name: "Add VM3_DB to inventory"
+    add_host:
+      hostname: "{{ db_instance.instances[0].public_ip_address }}"
+      ansible_connection: ssh
+      ansible_ssh_private_key_file: "/home/vagrant/.ssh/CS5287.pem" # todo
+      groups: 
+      - VM3
+      - AWS
+  - name: Wait for SSH
+    wait_for:
+      host: "{{ db_instance.instances[0].public_ip_address }}"
+      port: 22
+      timeout: 320
+      state: started
+  - name: Retrieve ZooKeeper instance IP
+    amazon.aws.ec2_instance_info:
+      region: us-east-1
+      filters:
+        "tag:Name": ansible-zookeeper
+        instance-state-name: ["running"]
+    register: zk_instance
+  - name: "Print results"
+    debug:
+      msg: "Zookeeper IP: {{ zk_instance.instances[0].public_ip_address }}"
+  - name: "Add VM2_ZK to inventory"
+    add_host:
+      hostname: "{{ zk_instance.instances[0].public_ip_address }}"
+      ansible_connection: ssh
+      ansible_ssh_private_key_file: "/home/vagrant/.ssh/CS5287.pem"
+      groups: 
+      - VM2
+      - AWS
+  - name: Wait for SSH Zookeeper
+    wait_for:
+      host: "{{ zk_instance.instances[0].public_ip_address }}"
+      port: 22
+      timeout: 320
+      state: started
+  - name: Wait for SSH Couch
+    wait_for:
+      host: "{{ db_instance.instances[0].public_ip_address }}"
+      port: 22
+      timeout: 320
+      state: started
+... 

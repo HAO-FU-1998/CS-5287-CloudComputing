@@ -1,0 +1,13 @@
+  - name: "Check for conf file"
+    stat:
+      path: /etc/systemd/system/producer.service.d/producer.conf
+    register: producer_conf
+    
+  - name: "Setup service conf file"
+    ansible.builtin.lineinfile:
+      path: /etc/systemd/system/producer.service.d/producer.conf
+      line: "[Service]\nEnvironment=\"ZOOKEEPER_IP={{ zk_instance.instances[0].public_ip_address }}\""
+      create: yes
+    become: yes
+    become_user: root
+    when: not producer_conf.stat.exists

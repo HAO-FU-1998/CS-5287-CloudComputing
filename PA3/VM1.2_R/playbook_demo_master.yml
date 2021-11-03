@@ -1,0 +1,63 @@
+---
+#
+# EECS 5287: Principles of Cloud Computing
+# Author: Stephen Rees
+# Created: Fall 2021
+
+- name: "Play 1: Prepare VM1.2 and start VM2 and VM3 instances"
+  hosts: MyLocalVMs	         # specified in the MyInventory file
+  remote_user:  vagrant      # vagrant provisioned virtual box has user of vagrant
+  gather_facts: yes          # We ask Ansible to collect all facts
+  become_user: no            # We will become on individual tasks as needed
+
+  tasks:    # the task to be performed (here I am showing the effect of include_)
+  - include_tasks: tasks/playbook_clone_repo.yml
+  - include_tasks: tasks/playbook_install_local_app.yml
+  - include_tasks: tasks/playbook_provision_servers.yml
+  # - include_tasks: tasks/playbook_configure_producer.yml
+
+- name: "Play 2: Install Docker and Kubernetes"
+  hosts: AWS
+  vars:
+    zookeeper_ip: "{{ hostvars['127.0.0.1']['zk_instance'].instances[0].public_ip_address }}"
+    couch_ip: "{{ hostvars['127.0.0.1']['db_instance'].instances[0].public_ip_address }}"
+  remote_user: ubuntu
+  gather_facts: yes
+  become_user: no
+  tasks:
+  - include_tasks: /home/vagrant/CS5287/PA3/shared_tasks/install_docker.yml
+  - include_tasks: /home/vagrant/CS5287/PA3/shared_tasks/install_kubernetes.yml
+  - include_tasks: /home/vagrant/CS5287/PA3/shared_tasks/clone_repo.yml
+  - include_tasks: /home/vagrant/CS5287/PA3/shared_tasks/docker_env.yml
+  
+- name: "Play 3: Setup K8S cluster on VM2"
+  hosts: VM2
+  vars:
+    zookeeper_ip: "{{ hostvars['127.0.0.1']['zk_instance'].instances[0].public_ip_address }}"
+    couch_ip: "{{ hostvars['127.0.0.1']['db_instance'].instances[0].public_ip_address }}"
+  remote_user: ubuntu
+  gather_facts: yes
+  become_user: no
+  tasks:
+  - include_tasks: /home/vagrant/CS5287/PA3/VM2_ZK/tasks/create_k8s_cluster.yml
+  - include_tasks: /home/vagrant/CS5287/PA3/VM2_ZK/tasks/create_docker_registry.yml
+  
+- name: "Play 4: Setup worker node for K8S"
+  hosts: VM3
+  vars:
+    zookeeper_ip: "{{ hostvars['127.0.0.1']['zk_instance'].instances[0].public_ip_address }}"
+    couch_ip: "{{ hostvars['127.0.0.1']['db_instance'].instances[0].public_ip_address }}"
+    #zk_hostvar_a: "hostvars['"
+    #zk_hostvar_b: "']['kubernetes_join_command']"
+    #join_str: "{{ hostvars['']['kubernetes_join_command'] }} --node-name kubeworker2"
+    #x join_str: "{{ lookup('vars', 'zk_hostvar') }} --node-name kubeworker2"
+    #join_str: "{{ lookup('vars', zk_hostvar_a + zookeeper_ip + zk_hostvar_b) }} --node-name kubeworker2"
+  remote_user: ubuntu
+  gather_facts: yes
+  become_user: no
+  tasks:
+  #- name: "Debug"
+    #debug:
+      #var: hostvars['34.228.79.230']['kubernetes_join_command']
+  - include_tasks: /home/vagrant/CS5287/PA3/VM3_DB/tasks/join_worker.yml
+...

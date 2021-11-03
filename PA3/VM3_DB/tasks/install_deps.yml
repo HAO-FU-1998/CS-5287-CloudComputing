@@ -1,0 +1,96 @@
+---
+#
+# EECS 5287: Principles of Cloud Computing
+# Author: Morley Bankston
+#
+# This playbook will install packages on VM3
+
+  - name: Installing CouchDB Dependencies
+    shell: 'sudo apt install -y curl apt-transport-https gnupg'
+    become: yes
+    become_user: root
+    tags: ms3
+
+  - name: Installing the CouchDB repository key
+    shell: 'curl https://couchdb.apache.org/repo/keys.asc | gpg --dearmor | sudo tee /usr/share/keyrings/couchdb-archive-keyring.gpg >/dev/null 2>&1'
+    become: yes
+    become_user: root
+    tags: ms3
+
+  - name: Loading CouchDB into shell
+    shell: 'source /etc/os-release && echo "deb [signed-by=/usr/share/keyrings/couchdb-archive-keyring.gpg] https://apache.jfrog.io/artifactory/couchdb-deb/ ${VERSION_CODENAME} main" \ | sudo tee /etc/apt/sources.list.d/couchdb.list >/dev/null'
+    args:
+      executable: /bin/bash
+    tags: ms3
+
+  - name: Update and upgrade apt packages
+    apt:
+      upgrade: yes
+      update_cache: yes
+    become: yes
+    become_user: root
+    tags: ms3
+
+  - name: "Install couchDB"
+    apt:
+      name: couchdb
+      update_cache: true
+    become: yes
+    become_user: root
+    tags: ms3
+
+  - name: Update couchdb ini file
+    community.general.ini_file:
+      dest: /opt/couchdb/etc/local.ini
+      section: "{{ item.section }}"
+      option: "{{ item.option }}"
+      value: "{{ item.value }}"
+      create: false
+      backup: "{{ true if index == 0 else false }}"
+    loop:
+      - { section: 'couchdb', option: 'single_node', value: 'true' }
+      - { section: 'chttpd', option: 'port', value: '5984' }
+      - { section: 'chttpd', option: 'bind_address', value: '0.0.0.0' }
+      - { section: 'admins', option: 'admin', value: 'JoyRide09*' }
+    loop_control:
+      index_var: index
+    become: yes
+    become_user: root
+    tags: ms3
+
+  - name: "Stop couchDB to apply changes"
+    sysvinit:
+      name: couchdb
+      state: stopped
+      enabled: yes
+    become: yes
+    become_user: root
+    tags: ms3
+
+  - name: "Create couchDB service"
+    copy:
+      dest: /etc/systemd/system/couchdb.service
+      content: |
+        [Unit]
+        Description=Couchdb service
+        After=network.target
+
+        [Service]
+        RuntimeDirectory=couchdb
+        User=couchdb
+        ExecStart=/opt/couchdb/bin/couchdb
+        Restart=always
+    become: yes
+    become_user: root
+    tags: ms3
+    
+  - name: "Start CouchDB Service"
+    systemd:
+      name: couchdb
+      state: started
+      daemon_reload: yes
+      enabled: yes
+    become: true
+    become_user: root
+    tags: ms3
+...

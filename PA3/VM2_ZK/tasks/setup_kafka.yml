@@ -1,0 +1,49 @@
+---
+#
+# EECS 5287: Principles of Cloud Computing
+# Author: Stephen Rees
+#
+# This playbook will setup Kafka on VirtualBox VM2_ZK
+
+  - name: "Configure kafka advertised.listeners"
+    lineinfile:
+      path: /home/kafka/kafka/config/server.properties
+      search_string: '#advertised.listeners=PLAINTEXT://your.host.name:9092'
+      line: "advertised.listeners=PLAINTEXT://{{ zookeeper_ip }}:9092"
+    become: yes
+    become_user: root
+      
+  - name: "Install zookeeper service"
+    copy:
+      src: /home/ubuntu/CS5287/PA2/VM2_ZK/zookeeper.service
+      dest: /etc/systemd/system
+      remote_src: yes
+    become: yes
+    become_user: root
+    
+  - name: "Install kafka service"
+    copy:
+      src: /home/ubuntu/CS5287/PA2/VM2_ZK/kafka.service
+      dest: /etc/systemd/system
+      remote_src: yes
+    become: yes
+    become_user: root
+    
+  - name: "Run Zookeeper"
+    systemd:
+      name: zookeeper
+      state: started
+      daemon_reload: yes
+      enabled: yes
+    become: true
+    become_user: root
+    
+  - name: "Run Kafka"
+    systemd:
+      name: kafka
+      state: started
+      daemon_reload: yes
+      enabled: yes
+    become: true
+    become_user: root
+...

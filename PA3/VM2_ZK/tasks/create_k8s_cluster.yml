@@ -1,0 +1,64 @@
+---
+#
+# EECS 5287: Principles of Cloud Computing
+# Author: Stephen Rees
+#
+# This playbook will setup Kafka on VirtualBox VM2_ZK
+
+# TODO!
+  - name: "Initialize Kubernetes cluster"
+    shell: 'kubeadm init --node-name kubemaster --pod-network-cidr=10.244.0.0/16'
+    args:
+      chdir: $HOME
+      creates: /etc/kubernetes/admin.conf
+    become: yes
+    become_user: root
+
+  - name: "Create .kube directory"
+    file:
+      path: $HOME/.kube
+      state: directory
+      mode: 0755
+ 
+  - name: "Copy admin.conf to .kube"
+    copy:
+      src: /etc/kubernetes/admin.conf
+      dest: /home/ubuntu/.kube/config
+      remote_src: yes
+    become: yes
+    become_user: root
+
+  - name: "perms for config file"
+    file:
+      path: /home/ubuntu/.kube/config
+      owner: ubuntu
+      group: ubuntu
+    become: yes
+    become_user: root
+    
+  - name: "networking layer for pods"
+    shell: 'kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml'
+    args:
+      chdir: $HOME
+      creates: /etc/cni/net.d/10-flannel.conflist
+      
+  - name: "get the join token"
+    shell: 'kubeadm token create --print-join-command'
+    register: kubernetes_join_command
+    become: yes
+    become_user: root
+    
+  - name: Copy join command to local file.
+    become: yes
+    become_user: root
+    local_action: copy content="{{ kubernetes_join_command.stdout_lines[0] }} --node-name kubeworker2" dest="/tmp/kubernetes_join_command" mode=0777
+    
+  - name: "check for taint"
+    shell: 'kubectl get nodes -o json | grep taints'
+    register: taints_exist
+    failed_when: "taints_exist.rc not in [ 0, 1 ]"
+    
+  - name: "taint master"
+    shell: 'kubectl taint nodes kubemaster node-role.kubernetes.io/master:NoSchedule-'
+    when: taints_exist.rc == 0
+...

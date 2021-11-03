@@ -1,0 +1,16 @@
+---
+#
+# EECS 5287: Principles of Cloud Computing
+# Author: Morley Bankston
+#
+# This playbook starts our consumer service
+
+  - name: Run Kafka consumer
+    systemd:
+      name: consumer
+      state: started
+      daemon_reload: yes
+    become: true
+    become_user: root
+    tags: ms3
+...
