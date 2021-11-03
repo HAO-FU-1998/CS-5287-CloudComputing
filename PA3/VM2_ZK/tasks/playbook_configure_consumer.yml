@@ -6,12 +6,12 @@
   - name: "Setup service conf file"
     ansible.builtin.lineinfile:
       path: /etc/systemd/system/consumer.service.d/consumer.conf
-      line: "[Service]\nEnvironment=\"COUCH_IP={{ couch_ip }}\""
+      line: "[Service]\nEnvironment=\"COUCH_IP=129.114.25.58\""
       create: yes
     become: yes
     become_user: root
     when: not consumer_conf.stat.exists
   - name: "Create Consumer logs folder"
     file:
-      path: /home/ubuntu/logs
+      path: /home/cc/logs
       state: directory
