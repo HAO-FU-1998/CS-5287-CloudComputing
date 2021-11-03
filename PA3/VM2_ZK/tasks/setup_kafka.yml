@@ -7,15 +7,15 @@
 
   - name: "Configure kafka advertised.listeners"
     lineinfile:
-      path: /home/kafka/kafka/config/server.properties
+      path: /home/cc/config/server.properties
       search_string: '#advertised.listeners=PLAINTEXT://your.host.name:9092'
-      line: "advertised.listeners=PLAINTEXT://{{ zookeeper_ip }}:9092"
+      line: "advertised.listeners=PLAINTEXT://129.114.25.15:9092"
     become: yes
     become_user: root
       
   - name: "Install zookeeper service"
     copy:
-      src: /home/ubuntu/CS5287/PA2/VM2_ZK/zookeeper.service
+      src: /home/cc/CS5287/PA3/VM2_ZK/zookeeper.service
       dest: /etc/systemd/system
       remote_src: yes
     become: yes
@@ -23,7 +23,7 @@
     
   - name: "Install kafka service"
     copy:
-      src: /home/ubuntu/CS5287/PA2/VM2_ZK/kafka.service
+      src: /home/cc/CS5287/PA3/VM2_ZK/kafka.service
       dest: /etc/systemd/system
       remote_src: yes
     become: yes
