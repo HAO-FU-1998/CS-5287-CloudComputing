@@ -31,8 +31,8 @@
   - name: "perms for config file"
     file:
       path: /home/ubuntu/.kube/config
-      owner: ubuntu
-      group: ubuntu
+      owner: cc
+      group: cc
     become: yes
     become_user: root
     
