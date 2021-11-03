@@ -1,5 +1,5 @@
 [Unit]
-Description=Kafka CoinBase Consumer
+Description=Kafka Consumer
 After=multi-user.target
 StartLimitIntervalSec=0
 
@@ -9,7 +9,7 @@ Restart=always
 RestartSec=1
 User=ubuntu
 EnvironmentFile=/etc/systemd/system/consumer.service.d/consumer.conf
-ExecStart=/usr/bin/python3 -u /home/ubuntu/CS5287/common/consumer.py --broker_ip ${COUCH_IP} --broker_port 9092 --couch_ip ${COUCH_IP} --couch_port 5984 --user admin --password JoyRide09*
+ExecStart=/usr/bin/python3 -u /home/cc/CS5287/consumer_cc.py
 
 [Install]
 WantedBy=multi-user.target
