@@ -30,7 +30,7 @@
   
   - name: Add docker repository to apt
     apt_repository:
-      repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ansible_distribution_release}} stable
+      repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu focal stable
       state: present
     become: yes
     become_user: root
