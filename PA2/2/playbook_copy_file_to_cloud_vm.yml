@@ -1,0 +1,12 @@
+---
+  - name: Copy file 1
+    copy:
+      src: /home/consumer_cc.py
+      dest: /home/cc/
+  
+  - name: Copy file 2
+    copy:
+      src: /home/cc/producer_cc.py
+      dest: /home/cc/
+...
+

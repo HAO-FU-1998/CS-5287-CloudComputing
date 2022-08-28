@@ -1,0 +1,8 @@
+---
+  - name: topic
+    ansible.builtin.shell: bin/kafka-console-consumer.sh --topic utilizations --max-messages 10 --bootstrap-server localhost:9092
+    register: result
+
+  - debug:
+      var: result.stdout_lines
+...

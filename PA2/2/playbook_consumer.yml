@@ -1,0 +1,15 @@
+---
+  - name: Wait to start consumer
+    pause:
+      seconds: 10
+      
+  - name: Run consumer
+    ansible.builtin.shell: nohup python3 consumer_cc.py &
+    
+  - name: Wait to Receive some Data
+    pause:
+      seconds: 10
+      
+  - name: Receive Data
+    ansible.builtin.shell: nohup python3 producer_cc.py &
+...
