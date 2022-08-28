@@ -1,9 +1,0 @@
----
-#
-# EECS 5287: Principles of Cloud Computing
-# Author: Morley Bankston
-# Created: Fall 2021
-#
-  - include_tasks: tasks/install_deps.yml
-  - include_tasks: tasks/setup_kafka.yml
-...
