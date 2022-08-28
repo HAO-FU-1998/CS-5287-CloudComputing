@@ -1,0 +1,50 @@
+---
+  - name: Remove any package from the old version
+    apt:
+      name: docker
+      state: absent
+    become: yes
+    become_user: root
+
+  - name: Install docker dependencies
+    become: yes
+    become_user: root
+    apt:
+      pkg:
+      - apt-transport-https
+      - ca-certificates
+      - curl
+      - gnupg-agent
+      - software-properties-common
+      update_cache: yes
+
+  - name: Add GPG key
+    shell: curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
+    become: yes
+    become_user: root
+
+  - name: Add docker repository to apt
+    become: yes
+    become_user: root
+    apt_repository:
+      repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ansible_distribution_release}} stable
+      state: present
+
+  - name: Install docker
+    become: yes
+    become_user: root
+    apt:
+      pkg:
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io   
+      update_cache: yes
+
+  - name: Check if docker is installed
+    become: yes
+    become_user: root
+    service:
+      name: docker
+      state: started
+      enabled: yes
+...

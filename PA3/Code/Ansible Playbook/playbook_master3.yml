@@ -1,0 +1,50 @@
+---
+#- name: "Create VM2 & VM3 on Chameleon"
+  #hosts: localhost
+  #remote_user: vagrant
+  #gather_facts: yes
+  #become_user: no
+  #tasks:
+  #- include_tasks: playbook_create_instance.yml
+
+- name: "Create Cloud VMs"
+  hosts: 127.0.0.1
+  remote_user: vagrant
+  strategy: debug
+  gather_facts: yes
+  become_user: no
+  collections:
+    - openstack.cloud
+
+
+- name: "Create k8s Cluster"
+  hosts: 129.114.25.15
+  remote_user: cc
+  strategy: debug
+  become: yes
+  become_user: root
+  collections:
+    - openstack.cloud
+  tasks:
+    - include_tasks: create_k8s_cluster.yml
+
+- name: "worker addition"
+  hosts: 129.114.27.215
+  remote_user: cc
+  strategy: debug
+  become: yes
+  become_user: root
+  collections:
+    - openstack.cloud
+  tasks:
+    - include_tasks: join_worker.yml 
+
+- name: "Start pods"
+  hosts: 129.114.25.15
+  remote_user: cc
+  gather_facts: yes
+  become_user: no
+  tasks:
+    - include_tasks: run_pods.yaml
+
+...

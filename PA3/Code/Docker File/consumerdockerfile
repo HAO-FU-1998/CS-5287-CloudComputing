@@ -1,0 +1,15 @@
+FROM ubuntu:20.04
+
+RUN apt-get update
+RUN apt install software-properties-common -y
+RUN add-apt-repository ppa:deadsnakes/ppa
+RUN apt update
+RUN apt install python3 -y
+RUN apt install python3-pip -y
+RUN pip3 install kafka-python
+RUN pip3 install couchdb
+
+COPY consumer_cc.py /home/
+
+# CMD python3 consumer_cc.py
+

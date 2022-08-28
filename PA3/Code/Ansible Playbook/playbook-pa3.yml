@@ -1,0 +1,11 @@
+---
+- name: "VM3"
+  hosts: 129.114.27.15
+  remote_user: cc
+  gather_facts: yes
+  become_user: no
+  tasks:
+  - include_tasks: install-docker.yml
+  - include_tasks: install-kubernetes.yml
+
+...

@@ -1,0 +1,49 @@
+---
+  - name: "remove any old daemon.json file"
+    file:
+      path: /etc/docker/daemon.json
+      state: absent
+    become: yes
+    become_user: root
+      
+  - name: "create fresh daemon.json file"
+    copy:
+      dest: /etc/docker/daemon.json
+      content: |
+        {
+            "insecure-registries" : ["129.114.25.15"]
+        }
+        {
+            "exec-opts": ["native.cgroupdriver=systemd"]
+        }
+        {
+            "registry-mirrors": ["https://registry.docker-cn.com"]
+        }
+    become: yes
+    become_user: root
+    
+  - name: "reload daemon information and docker service"
+    systemd:
+      state: restarted
+      daemon_reload: yes
+      name: docker
+    become: true
+    become_user: root
+    
+  #- name: "Check registry service"
+    #docker_container_info:
+      #name: MyRegistry
+    #register: container_registry
+    #become: true
+    #become_user: root
+      
+  #- name: "startup registry service"
+    #docker_container:
+      #name: MyRegistry
+      #ports: "5000:5000"
+      #restart_policy: "always"
+      #image: registry:2
+    #become: true
+    #become_user: root
+    #when: (container_registry.container['State']['Status'] is not defined) or (container_registry.container['State']['Status'] != 'running')
+...
